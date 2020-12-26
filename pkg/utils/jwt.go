@@ -7,7 +7,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-var jwtSecret = []byte(DefaultGetEnv("JWT_SECRET_KEY", ""))
+var jwtSecret = []byte(GetEnv("JWT_SECRET_KEY", ""))
 
 // JWTCustomClaims :
 type JWTCustomClaims struct {

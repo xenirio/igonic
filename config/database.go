@@ -6,47 +6,56 @@ import (
 	"github.com/openware/gin-skel/models"
 	"github.com/openware/gin-skel/pkg/utils"
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
-
 // ConnectDatabase : connect to database MySQL using gorm
 // gorm (GO ORM for SQL): http://gorm.io/docs/connecting_to_the_database.html
-func ConnectDatabase() {
+func ConnectDatabase() (db *gorm.DB) {
+	dbDriver := utils.GetEnv("DATABASE_DRIVER", "mysql")
+	dbHost := utils.GetEnv("DATABASE_HOST", "localhost")
+	dbPort := utils.GetEnv("DATABASE_PORT", "3306")
+	dbName := utils.GetEnv("DATABASE_NAME", "opendax_development")
+	dbUser := utils.GetEnv("DATABASE_USER", "root")
+	dbPass := utils.GetEnv("DATABASE_PASS", "")
 
-	dbHost := utils.DefaultGetEnv("DATABASE_HOST", "localhost")
-	dbPort := utils.DefaultGetEnv("DATABASE_PORT", "3306")
-	dbName := utils.DefaultGetEnv("DATABASE_NAME", "opendax_development")
-	dbUser := utils.DefaultGetEnv("DATABASE_USER", "root")
-	dbPass := utils.DefaultGetEnv("DATABASE_PASS", "")
+	var err error
+	var dial gorm.Dialector
 
-	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
-		dbUser, dbPass, dbPort, dbHost, dbName,
-	)
+	switch dbDriver {
+	case "memory":
+		dial = sqlite.Open(":memory:")
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	case "mysql":
+		dsn := fmt.Sprintf(
+			"%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+			dbUser, dbPass, dbHost, dbPort, dbName,
+		)
+		dial = mysql.Open(dsn)
 
+	default:
+		panic("Unsupported DB_DRIVER: " + dbDriver)
+
+	}
+	db, err = gorm.Open(dial, &gorm.Config{})
 	if err != nil {
 		panic(err)
-	} else {
-		fmt.Println("Connect database PostgreSQL successfully")
 	}
 
 	// Pass db connection to package controllers and models
 	models.SetUpDBConnection(db)
 	// controllers.SetUpDBConnection(db)
 
-	// Store this db connection for package config
-	setUpDBConnection(db)
-}
-
-func setUpDBConnection(DB *gorm.DB) {
-	db = DB
-}
-
-// GetDBConnection : get db connection from package config
-func GetDBConnection() *gorm.DB {
 	return db
+}
+
+// RunMigrations create and modify database tables according to the models
+func RunMigrations(db *gorm.DB) {
+	db.AutoMigrate(&models.Article{})
+}
+
+// LoadSeeds import seed files into database
+func LoadSeeds(db *gorm.DB) {
+	models.SeedArticles(db)
 }
