@@ -31,10 +31,10 @@ type Args struct {
 
 // Parse the configuration and prefill the param cfg
 func Parse(cfg *Config) {
-	args := processArgs(&cfg)
+	args := processArgs(cfg)
 
 	// read configuration from the file and environment variables
-	if err := ika.ReadConfig(args.ConfigPath, &cfg); err != nil {
+	if err := ika.ReadConfig(args.ConfigPath, cfg); err != nil {
 		fmt.Println(err)
 		os.Exit(2)
 	}
