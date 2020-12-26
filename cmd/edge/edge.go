@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/openware/gin-skel/config"
+	"github.com/openware/gin-skel/pkg/utils"
 	"github.com/openware/gin-skel/routes"
 
 	"github.com/foolin/goview/supports/ginview"
@@ -23,13 +24,19 @@ func configApp() {
 }
 
 func main() {
-
 	// config.LoadEnv()
-	// config.ConnectDatabase()
 	var cfg config.Config
 
 	config.Parse(&cfg)
 	configApp()
+
+	db := config.ConnectDatabase()
+	config.RunMigrations(db)
+
+	dbSeed := utils.GetEnv("DATABASE_SEED", "true")
+	if dbSeed == "true" {
+		config.LoadSeeds(db)
+	}
 
 	app.Run(":" + cfg.Port)
 }

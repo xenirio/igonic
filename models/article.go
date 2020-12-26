@@ -1,55 +1,41 @@
 package models
 
 import (
-	"errors"
+	"io/ioutil"
+	"time"
 
-	"github.com/openware/gin-skel/pkg/utils"
+	"gopkg.in/yaml.v2"
+	"gorm.io/gorm"
 )
 
 // Article : Table name is `ars`
 type Article struct {
-	CustomBasicModel
-
-	Articlename string `gorm:"unique_index" json:"arname"`
-	Email       string `gorm:"unique_index" json:"email"`
-	Password    string `gorm:"not null" json:"-"` // json: "-", ignored in responses
-	Salt        string `gorm:"not null" json:"-"` // json: "-", ignored in responses
-
-	Name     string `json:"name"`
-	Location string `json:"location"`
-	Title    string `json:"title"`
-	AboutMe  string `json:"aboutMe"`
-	Website  string `json:"website"`
-	Github   string `json:"github"`
-	Twitter  string `json:"twitter"`
-	PhotoURL string `json:"photoUrl"`
+	ID               uint   `gorm:"primarykey"`
+	Slug             string `gorm:"unique_index" yaml:"slug"`
+	AuthorUID        string `gorm:"index" yaml:"author_uid"`
+	Title            string `yaml:"title"`
+	ShortDescription string `yaml:"short_description"`
+	Body             string `yaml:"body"`
+	Language         string `yaml:"language"`
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
 }
 
-var random = utils.Random{}
-var crypto = utils.Crypto{}
-var jwt = utils.JWT{}
-
-// GenerateSalt : generate new salt for ar, used when sign up or change password
-func (ar *Article) GenerateSalt() {
-	ar.Salt = random.Hex(32)
-}
-
-// HashPassword : hash raw password with salt of ar
-func (ar Article) HashPassword(rawPassword string) string {
-	return crypto.SHA256(rawPassword + ar.Salt)
-}
-
-// ValidatePassword : validate if password is correctly
-func (ar Article) ValidatePassword(rawPassword string) bool {
-	return ar.Password == crypto.SHA256(rawPassword+ar.Salt)
-}
-
-// ChangePassword : change password of ar with old and new password
-func (ar *Article) ChangePassword(rawOldPassword, rawNewPassword string) error {
-	if !ar.ValidatePassword(rawOldPassword) {
-		return errors.New("Password is not correct")
+// SeedArticles load from article from config/articles.yml to database
+func SeedArticles(db *gorm.DB) error {
+	raw, err := ioutil.ReadFile("config/articles.yml")
+	if err != nil {
+		return err
 	}
-	ar.GenerateSalt()
-	ar.Password = ar.HashPassword(rawNewPassword)
+	articles := []Article{}
+	err = yaml.Unmarshal(raw, &articles)
+	if err != nil {
+		return err
+	}
+
+	tx := db.Create(&articles)
+	if tx.Error != nil {
+		return err
+	}
 	return nil
 }
