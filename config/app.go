@@ -45,7 +45,7 @@ func processArgs(cfg interface{}) Args {
 	var a Args
 
 	f := flag.NewFlagSet("OpenDAX server", 1)
-	f.StringVar(&a.ConfigPath, "c", "config.yml", "Path to configuration file")
+	f.StringVar(&a.ConfigPath, "c", "config/app.yml", "Path to configuration file")
 
 	fu := f.Usage
 	f.Usage = func() {
