@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/openware/gin-skel/module"
+	"github.com/openware/gin-skel/module/article"
 	"github.com/openware/ika"
 )
 
@@ -59,4 +61,11 @@ func processArgs(cfg interface{}) Args {
 
 	f.Parse(os.Args[1:])
 	return a
+}
+
+// ActiveModules return the list of active modules for the current application
+func ActiveModules() []module.Module {
+	return []module.Module{
+		&article.ModuleArticle{},
+	}
 }

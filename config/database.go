@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 
-	"github.com/openware/gin-skel/models"
 	"github.com/openware/gin-skel/pkg/utils"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
@@ -43,19 +42,5 @@ func ConnectDatabase() (db *gorm.DB) {
 		panic(err)
 	}
 
-	// Pass db connection to package controllers and models
-	models.SetUpDBConnection(db)
-	// controllers.SetUpDBConnection(db)
-
 	return db
-}
-
-// RunMigrations create and modify database tables according to the models
-func RunMigrations(db *gorm.DB) {
-	db.AutoMigrate(&models.Article{})
-}
-
-// LoadSeeds import seed files into database
-func LoadSeeds(db *gorm.DB) {
-	models.SeedArticles(db)
 }
