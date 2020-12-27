@@ -17,7 +17,7 @@ type ModulePage struct{}
 // Page : Table name is `Pages`
 type Page struct {
 	ID               uint   `gorm:"primarykey"`
-	Path             string `gorm:"unique_index" yaml:"path"`
+	Path             string `gorm:"index:idx_path,unique" yaml:"path"`
 	AuthorUID        string `gorm:"index" yaml:"author_uid"`
 	Title            string `yaml:"title"`
 	ShortDescription string `yaml:"short_description"`
@@ -28,7 +28,7 @@ type Page struct {
 }
 
 // SetupRoutes configure module HTTP routes
-func (m *ModulePage) SetupRoutes(db *gorm.DB, router *gin.Engine) error {
+func (m *ModulePage) SetupRoutes(db *gorm.DB, router *gin.Engine, private *gin.RouterGroup) error {
 	for _, p := range ListPages(db) {
 		router.GET(p.Path, pageGet(&p))
 	}

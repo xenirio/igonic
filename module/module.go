@@ -9,7 +9,7 @@ import (
 type Module interface {
 	Migrate(db *gorm.DB) error
 	Seed(db *gorm.DB) error
-	SetupRoutes(*gorm.DB, *gin.Engine) error
+	SetupRoutes(*gorm.DB, *gin.Engine, *gin.RouterGroup) error
 }
 
 // Registry stores the list of active modules
@@ -44,8 +44,8 @@ func (r *Registry) Seed(db *gorm.DB) {
 }
 
 // SetupRoutes import seed files into database
-func (r *Registry) SetupRoutes(db *gorm.DB, app *gin.Engine) {
+func (r *Registry) SetupRoutes(db *gorm.DB, app *gin.Engine, private *gin.RouterGroup) {
 	for _, m := range r.Modules {
-		m.SetupRoutes(db, app)
+		m.SetupRoutes(db, app, private)
 	}
 }

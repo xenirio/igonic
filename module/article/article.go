@@ -17,7 +17,7 @@ type ModuleArticle struct{}
 // Article : Table name is `articles`
 type Article struct {
 	ID               uint   `gorm:"primarykey"`
-	Slug             string `gorm:"unique_index" yaml:"slug"`
+	Slug             string `gorm:"idx_slug,unique" yaml:"slug"`
 	AuthorUID        string `gorm:"index" yaml:"author_uid"`
 	Title            string `yaml:"title"`
 	ShortDescription string `yaml:"short_description"`
@@ -28,7 +28,7 @@ type Article struct {
 }
 
 // SetupRoutes configure module HTTP routes
-func (m *ModuleArticle) SetupRoutes(db *gorm.DB, router *gin.Engine) error {
+func (m *ModuleArticle) SetupRoutes(db *gorm.DB, router *gin.Engine, private *gin.RouterGroup) error {
 	router.GET("/article/:slug", articleGet(db))
 	return nil
 }

@@ -1,10 +1,13 @@
 package main
 
 import (
+	"os"
+
 	"github.com/openware/gin-skel/config"
 	"github.com/openware/gin-skel/module"
 	"github.com/openware/gin-skel/pkg/utils"
 	"github.com/openware/gin-skel/routes"
+	"github.com/openware/pkg/jwt"
 	"gorm.io/gorm"
 
 	"github.com/foolin/goview/supports/ginview"
@@ -28,9 +31,20 @@ func configApp(db *gorm.DB) {
 	// Set up view engine
 	app.HTMLRender = ginview.Default()
 
+	jwtPublicKey := os.Getenv("JWT_PUBLIC_KEY")
+	if jwtPublicKey == "" {
+		panic("missing JWT_PUBLIC_KEY")
+	}
+
+	keyStore := &jwt.KeyStore{}
+	err := keyStore.LoadPublicKeyFromString(jwtPublicKey)
+	if err != nil {
+		panic("Failed to load JWT public key: " + err.Error())
+	}
+
 	// View routes
-	routes.SetUp(app)
-	mod.SetupRoutes(db, app)
+	private := routes.SetUp(app, keyStore)
+	mod.SetupRoutes(db, app, private)
 }
 
 func main() {
