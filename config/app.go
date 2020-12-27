@@ -7,6 +7,7 @@ import (
 
 	"github.com/openware/gin-skel/module"
 	"github.com/openware/gin-skel/module/article"
+	"github.com/openware/gin-skel/module/page"
 	"github.com/openware/ika"
 )
 
@@ -67,5 +68,6 @@ func processArgs(cfg interface{}) Args {
 func ActiveModules() []module.Module {
 	return []module.Module{
 		&article.ModuleArticle{},
+		&page.ModulePage{},
 	}
 }
