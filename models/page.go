@@ -23,7 +23,7 @@ type Page struct {
 	UpdatedAt   time.Time
 }
 
-// Seed load from Page from config/Pages.yml to database
+// SeedPages load from Page from config/Pages.yml to database
 func SeedPages(db *gorm.DB) error {
 	raw, err := ioutil.ReadFile("db/seeds/pages.yml")
 	if err != nil {
@@ -51,7 +51,7 @@ func FindPageByPath(db *gorm.DB, path string) *Page {
 		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 			return nil
 		}
-		log.Fatal("FindPageByPath failed: %s", tx.Error.Error())
+		log.Fatalf("FindPageByPath failed: %s", tx.Error.Error())
 		return nil
 	}
 	return &page
@@ -63,7 +63,7 @@ func ListPages(db *gorm.DB) []Page {
 	tx := db.Find(&pages)
 
 	if tx.Error != nil {
-		log.Fatal("FindPageByPath failed: %s", tx.Error.Error())
+		log.Fatalf("FindPageByPath failed: %s", tx.Error.Error())
 	}
 	return pages
 }

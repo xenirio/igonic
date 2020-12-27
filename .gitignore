@@ -1,1 +1,4 @@
 bin/
+/config/rsa-key
+/config/rsa-key.pub
+/barong-jwt

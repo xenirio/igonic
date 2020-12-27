@@ -1,8 +1,12 @@
 package main
 
 import (
+	"os"
+
 	"github.com/openware/igonic/config"
 	"github.com/openware/igonic/routes"
+
+	"github.com/openware/pkg/jwt"
 
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/gin-gonic/gin"
@@ -18,8 +22,19 @@ func configApp() {
 	// Set up view engine
 	app.HTMLRender = ginview.Default()
 
+	jwtPublicKey := os.Getenv("JWT_PUBLIC_KEY")
+	if jwtPublicKey == "" {
+		panic("missing JWT_PUBLIC_KEY")
+	}
+
+	keyStore := &jwt.KeyStore{}
+	err := keyStore.LoadPublicKeyFromString(jwtPublicKey)
+	if err != nil {
+		panic("Failed to load JWT public key: " + err.Error())
+	}
+
 	// View routes
-	routes.SetUp(app)
+	routes.SetUp(app, keyStore)
 }
 
 func main() {
