@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/openware/gin-skel/config"
-	"github.com/openware/gin-skel/routes"
+	"github.com/openware/igonic/config"
+	"github.com/openware/igonic/routes"
 
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/gin-gonic/gin"
@@ -29,10 +29,10 @@ func main() {
 	config.Parse(&cfg)
 	configApp()
 
+	db := config.ConnectDatabase()
 	if !cfg.SkipMigrate {
-		db := config.ConnectDatabase()
 		config.RunMigrations(db)
 	}
-
+	routes.SetPageRoutes(db, app)
 	app.Run(":" + cfg.Port)
 }

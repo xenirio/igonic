@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/openware/ika"
+	"github.com/openware/pkg/ika"
 )
 
 // Config is the application configuration structure

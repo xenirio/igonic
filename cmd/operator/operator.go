@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/openware/gin-skel/config"
+	"github.com/openware/igonic/config"
 )
 
 var cfg config.Config
@@ -28,6 +28,7 @@ func usage() {
 	fmt.Println(`
 Usage: operator
 
+db:create		Create database
 db:migrate		Migrate database
 db:seed			Seed database`)
 	os.Exit(1)

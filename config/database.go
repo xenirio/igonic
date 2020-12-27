@@ -2,9 +2,10 @@ package config
 
 import (
 	"fmt"
+	"log"
 
-	"github.com/openware/gin-skel/models"
-	"github.com/openware/gin-skel/pkg/utils"
+	"github.com/openware/igonic/models"
+	"github.com/openware/igonic/pkg/utils"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -53,9 +54,17 @@ func ConnectDatabase() (db *gorm.DB) {
 // RunMigrations create and modify database tables according to the models
 func RunMigrations(db *gorm.DB) {
 	db.AutoMigrate(&models.Article{})
+	db.AutoMigrate(&models.Page{})
 }
 
 // LoadSeeds import seed files into database
 func LoadSeeds(db *gorm.DB) {
-	models.SeedArticles(db)
+	err := models.SeedArticles(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = models.SeedPages(db)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
