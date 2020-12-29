@@ -29,7 +29,8 @@ func main() {
 	config.Parse(&cfg)
 	configApp()
 
-	db := config.ConnectDatabase()
+	// Connect to the database server with the config/app.yaml configure
+	db := config.ConnectDatabase(cfg.Database.Name)
 	if !cfg.SkipMigrate {
 		config.RunMigrations(db)
 	}
