@@ -10,16 +10,19 @@ import (
 var cfg config.Config
 
 func create() {
+	// Connect to the database server with out specify the database.
 	db := config.ConnectDatabase("")
 	db = db.Exec(fmt.Sprintf("CREATE DATABASE `%s`;", cfg.Database.Name))
 }
 
 func migrate() {
+	// Connect to the database server with the config/app.yaml configure
 	db := config.ConnectDatabase(cfg.Database.Name)
 	config.RunMigrations(db)
 }
 
 func seed() {
+	// Connect to the database server with the config/app.yaml configure
 	db := config.ConnectDatabase(cfg.Database.Name)
 	config.LoadSeeds(db)
 }
