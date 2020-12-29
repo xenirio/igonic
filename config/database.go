@@ -13,11 +13,10 @@ import (
 
 // ConnectDatabase : connect to database MySQL using gorm
 // gorm (GO ORM for SQL): http://gorm.io/docs/connecting_to_the_database.html
-func ConnectDatabase() (db *gorm.DB) {
+func ConnectDatabase(dbName string) (db *gorm.DB) {
 	dbDriver := utils.GetEnv("DATABASE_DRIVER", "mysql")
 	dbHost := utils.GetEnv("DATABASE_HOST", "localhost")
 	dbPort := utils.GetEnv("DATABASE_PORT", "3306")
-	dbName := utils.GetEnv("DATABASE_NAME", "opendax_development")
 	dbUser := utils.GetEnv("DATABASE_USER", "root")
 	dbPass := utils.GetEnv("DATABASE_PASS", "")
 

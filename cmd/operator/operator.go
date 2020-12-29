@@ -10,17 +10,17 @@ import (
 var cfg config.Config
 
 func create() {
-	db := config.ConnectDatabase()
+	db := config.ConnectDatabase("")
 	db = db.Exec(fmt.Sprintf("CREATE DATABASE `%s`;", cfg.Database.Name))
 }
 
 func migrate() {
-	db := config.ConnectDatabase()
+	db := config.ConnectDatabase(cfg.Database.Name)
 	config.RunMigrations(db)
 }
 
 func seed() {
-	db := config.ConnectDatabase()
+	db := config.ConnectDatabase(cfg.Database.Name)
 	config.LoadSeeds(db)
 }
 
